@@ -33,7 +33,8 @@ app.get('/', (req, res) => {
 app.use('/api/cars', require('./routers/cars'));      
 app.use('/api/carsuser', require('./routers/caruser')); 
 app.use('/api/orders', require('./routers/order'));    
-app.use('/api/users', require('./routers/user'));     
+app.use('/api/users', require('./routers/user'));  
+app.use('/api/favorites',require('./routers/favorite'))   
 
 // إعدادات Port و MongoDB
 const PORT = process.env.PORT || 8080;
