@@ -70,14 +70,27 @@ router.get('/check/:productId', verifyToken, asyncHandler(async (req, res) => {
     });
 }));
 
-// 4. مسح كافة المفضلة (اختياري)
-// [DELETE] /api/favorites/clear
-router.delete('/clear', verifyToken, asyncHandler(async (req, res) => {
-    await Favorite.deleteMany({ user: req.user.id });
-    res.status(200).json({ 
-        success: true, 
-        message: "تم مسح قائمة المفضلة بالكامل" 
-    });
+// 1. حذف عنصر واحد محدد عن طريق الـ ID
+// [DELETE] /api/favorites/remove/:productId
+router.delete('/remove/:productId', verifyToken, asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    const result = await Favorite.findOneAndDelete({ user: userId, productId: productId });
+
+    if (!result) {
+        return res.status(404).json({ message: "هذا العنصر غير موجود في مفضلتك" });
+    }
+
+    res.status(200).json({ success: true, message: "تمت الإزالة من المفضلة" });
 }));
+
+// 2. مسح كل المفضلة للمستخدم الحالي
+// [DELETE] /api/favorites/clear-all
+router.delete('/clear-all', verifyToken, asyncHandler(async (req, res) => {
+    await Favorite.deleteMany({ user: req.user.id });
+    res.status(200).json({ success: true, message: "تم تنظيف قائمة المفضلة بالكامل" });
+}));
+
 
 module.exports = router;
